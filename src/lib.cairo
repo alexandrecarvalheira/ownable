@@ -8,7 +8,7 @@ trait Idata<T> {
 }
 
 #[starket::interface]
-trait OwnableTrait<T>{
+trait OwnableTrait<T> {
     fn transfer_onwership(ref self: T, new_owner: ContractAddress);
     fn owner(self: @T) -> ContractAddress;
 }
@@ -27,10 +27,10 @@ mod ownable {
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event{
+    enum Event {
         OwnershipTransferred: OwnershipTransferred,
     }
-  
+
     #[derive(Drop, starknet::Event)]
     struct OwnershipTransferred {
         #[key]
@@ -57,21 +57,15 @@ mod ownable {
 
     #[external(v0)]
     impl OwnableTraitImpl of OwnableTrait<ContractState> {
-        fn transfer_onwership(ref self: ContractState, new_owner: ContractAddress){
-                self.only_owner();
-                let prev_owner = self.owner.read();
-                self.owner.write(new_owner);
-                self.emit( OwnershipTransferred {
-                    prev_owner,
-                    new_owner
-                });
-
-            }
+        fn transfer_onwership(ref self: ContractState, new_owner: ContractAddress) {
+            self.only_owner();
+            let prev_owner = self.owner.read();
+            self.owner.write(new_owner);
+            self.emit(OwnershipTransferred { prev_owner, new_owner });
+        }
         fn owner(self: @ContractState) -> ContractAddress {
             self.owner.read()
         }
-
-
     }
 
 
